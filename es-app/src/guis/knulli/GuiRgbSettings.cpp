@@ -39,6 +39,9 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
     sliderLedBrightness = createSlider("BRIGHTNESS", 0.f, 255.f, 1.f, "", "");
     setConfigValueForSlider(sliderLedBrightness, DEFAULT_BRIGHTNESS, "led.brightness");
 
+    // Adaptive Brightness switch
+    switchAdaptiveBrightness = createSwitch("ADAPTIVE BRIGHTNESS", "led.brightness.adaptive", "Automatically adapts LED brightness to screen brightness (based on the brightness setting above).");
+
     // LED Speed Slider
     sliderLedSpeed = createSlider("SPEED", 1.f, 255.f, 1.f, "", "Not applicable for all devices/modes. Warning: High speed may cause seizures for people with photosensitive epilepsy.");
     setConfigValueForSlider(sliderLedSpeed, DEFAULT_SPEED, "led.speed");
@@ -65,6 +68,7 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
     addSaveFunc([this] {
         SystemConf::getInstance()->set("led.mode", optionListMode->getSelected());
         SystemConf::getInstance()->set("led.brightness", std::to_string((int) sliderLedBrightness->getValue()));
+        SystemConf::getInstance()->set("led.brightness.adaptive", (switchAdaptiveBrightness->getState() ? DEFAULT_SWITCH_ON : "0"));
         SystemConf::getInstance()->set("led.speed", std::to_string((int) sliderLedSpeed->getValue()));
         setRgbValues(sliderLedRed->getValue(), sliderLedGreen->getValue(), sliderLedBlue->getValue());
         SystemConf::getInstance()->set("led.battery.low", std::to_string((int) sliderLowBatteryThreshold->getValue()));
