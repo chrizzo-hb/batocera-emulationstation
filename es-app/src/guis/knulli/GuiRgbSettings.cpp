@@ -180,7 +180,7 @@ void GuiRgbSettings::setRgbValues(float red, float green, float blue)
     SystemConf::getInstance()->set("led.colour", colour);
 }
 
-void applyValues()
+void GuiRgbSettings::applyValues()
 {
     std::string selectedMode = optionListMode->getSelected();
     int selectedBrightness = (int) sliderLedBrightness->getValue();

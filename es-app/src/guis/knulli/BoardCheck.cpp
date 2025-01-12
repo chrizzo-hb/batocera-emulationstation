@@ -20,11 +20,11 @@ std::string BoardCheck::getBoard()
 	}
 	return "";
 }
-bool BoardCheck::isBoard(std::string boards[])
+bool BoardCheck::isBoard(const std::vector<std::string>& boards)
 {
 	std::string board = BoardCheck::getBoard();
-	for (int i = 0; i < sizeof(boards); i++) {
-		if (board == boards[i]) {
+	for (const auto& b : boards) {
+		if (board == b) {
 			return true;
 		}
 	}

@@ -5,6 +5,6 @@ class BoardCheck
 {
 public:
         static std::string getBoard();
-        static bool isBoard(std::string boards[]);
+        static bool isBoard(const std::vector<std::string>& boards);
 
 };

@@ -18,13 +18,13 @@
 #include "utils/Platform.h"
 #include "BoardCheck.h"
 
-const std::string[] SUPPORTED_RGB_BOARDS = {"rg40xx-h", "rg40xx-v", "rg-cubexx", "trimui-smart-pro", "trimui-brick"};
+const std::vector<std::string> SUPPORTED_RGB_BOARDS = {"rg40xx-h", "rg40xx-v", "rg-cubexx", "trimui-smart-pro", "trimui-brick"};
 
 GuiTools::GuiTools(Window* window) : GuiSettings(window, _("TOOLS").c_str())
 {
 	addGroup(_("DEVICE SETTINGS"));
 	addEntry(_("POWER MANAGEMENT"), true, [this] { openPowerManagementSettings(); });
-	if(BoardCheck->isBoard(SUPPORTED_RGB_BOARDS)) {
+	if(BoardCheck.isBoard(SUPPORTED_RGB_BOARDS)) {
 		addEntry(_("RGB LED SETTINGS"), true, [this] { openRgbLedSettings(); });
 	}
 	addGroup(_("THIRD PARTY SOFTWARE"));
