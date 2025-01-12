@@ -109,7 +109,7 @@ GuiPowerManagementSettings::GuiPowerManagementSettings(Window* window) : GuiSett
 		SystemConf::getInstance()->set("system.batterysaver.extendedtimer", std::to_string(newBatterySaverExtendedTimeSeconds));
 		SystemConf::getInstance()->set("system.batterysaver.extendedmode", optionsBatterySaveExtendedMode->getSelected());
 		SystemConf::getInstance()->setBool("system.batterysaver.aggressive", aggressiveBatterySaveMode->getState());
-		if (BoardCheck->isBoard(SUPPORTED_LID_BOARDS)) {
+		if (BoardCheck::isBoard(SUPPORTED_LID_BOARDS)) {
 			SystemConf::getInstance()->set("system.lid", optionsLidCloseMode->getSelected());
 		}
 		SystemConf::getInstance()->saveSystemConf();
