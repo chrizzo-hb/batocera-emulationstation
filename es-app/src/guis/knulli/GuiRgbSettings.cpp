@@ -107,7 +107,7 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
     optionsLedMode->add(_("SINGLE RAINBOW"), "5", selectedLedMode == "5");
     optionsLedMode->add(_("MULTI RAINBOW"), "6", selectedLedMode == "6");
 
-    optionsLedMode->setOnValueChangedCallback([this](std::string value) { applyValues(); });
+    optionsLedMode->setSelectedChangedCallback([this](std::string value) { applyValues(); });
 
     addWithDescription(_("MODE"), _("Not every mode is available on every device."), optionsLedMode);
     return optionsLedMode;
@@ -117,7 +117,7 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
 std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label, float min, float max, float step, std::string unit, std::string description)
 {
     std::shared_ptr<SliderComponent> slider = std::make_shared<SliderComponent>(mWindow, min, max, step, unit);
-    slider->setOnValueChangedCallback([this](float value) { applyValues(); });
+    slider->setOnValueChanged([this](float value) { applyValues(); });
     if (description.empty()) {
         addWithLabel(label, slider);
     } else {
