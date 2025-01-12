@@ -117,7 +117,7 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
 std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label, float min, float max, float step, std::string unit, std::string description)
 {
     std::shared_ptr<SliderComponent> slider = std::make_shared<SliderComponent>(mWindow, min, max, step, unit);
-    slider->onValueChanged([this](float value) { applyValues(); });
+    slider->setOnValueChangedCallback([this](float value) { applyValues(); });
     if (description.empty()) {
         addWithLabel(label, slider);
     } else {
