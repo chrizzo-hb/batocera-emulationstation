@@ -16,12 +16,17 @@
 #include <SDL_events.h>
 #include <algorithm>
 #include "utils/Platform.h"
+#include "BoardCheck.h"
+
+const std::string[] SUPPORTED_RGB_BOARDS = {"rg40xx-h", "rg40xx-v", "rg-cubexx", "trimui-smart-pro", "trimui-brick"};
 
 GuiTools::GuiTools(Window* window) : GuiSettings(window, _("TOOLS").c_str())
 {
 	addGroup(_("DEVICE SETTINGS"));
 	addEntry(_("POWER MANAGEMENT"), true, [this] { openPowerManagementSettings(); });
-	addEntry(_("RGB LED SETTINGS"), true, [this] { openRgbLedSettings(); });
+	if(BoardCheck->isBoard(SUPPORTED_RGB_BOARDS)) {
+		addEntry(_("RGB LED SETTINGS"), true, [this] { openRgbLedSettings(); });
+	}
 	addGroup(_("THIRD PARTY SOFTWARE"));
 	addEntry(_("INSTALL PICO-8"), true, [this] { installPico8(); });
 }

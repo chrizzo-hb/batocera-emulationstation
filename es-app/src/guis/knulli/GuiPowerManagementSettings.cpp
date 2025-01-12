@@ -14,6 +14,9 @@
 #include <SDL_events.h>
 #include <algorithm>
 #include "utils/Platform.h"
+#include "BoardCheck.h"
+
+const std::string[] SUPPORTED_LID_BOARDS = {"rg40xx-sp"};
 
 GuiPowerManagementSettings::GuiPowerManagementSettings(Window* window) : GuiSettings(window, _("POWER MANAGEMENT").c_str())
 {
@@ -82,18 +85,20 @@ GuiPowerManagementSettings::GuiPowerManagementSettings(Window* window) : GuiSett
 	aggressiveBatterySaveMode->setState(SystemConf::getInstance()->getBool("system.batterysaver.aggressive"));
 	addWithLabel(_("ENABLE AGGRESSIVE MODE"), aggressiveBatterySaveMode);
 
-	// Lid close mode
-	auto optionsLidCloseMode = std::make_shared<OptionListComponent<std::string> >(mWindow, _("LID CLOSE MODE"), false);
+	if (BoardCheck->isBoard(SUPPORTED_LID_BOARDS)) {
+		// Lid close mode
+		auto optionsLidCloseMode = std::make_shared<OptionListComponent<std::string> >(mWindow, _("LID CLOSE MODE"), false);
 
-	std::string selectedLidCloseMode = SystemConf::getInstance()->get("system.lid");
-	if (selectedLidCloseMode.empty())
-		selectedLidCloseMode = "suspend";
+		std::string selectedLidCloseMode = SystemConf::getInstance()->get("system.lid");
+		if (selectedLidCloseMode.empty())
+			selectedLidCloseMode = "suspend";
 
-	optionsLidCloseMode->add(_("DISPLAY OFF"),    "dispoff", selectedLidCloseMode == "dispoff");
-	optionsLidCloseMode->add(_("SUSPEND"),        "suspend", selectedLidCloseMode == "suspend");
-	optionsLidCloseMode->add(_("SHUTDOWN"),       "shutdown", selectedLidCloseMode == "shutdown");
+		optionsLidCloseMode->add(_("DISPLAY OFF"),    "dispoff", selectedLidCloseMode == "dispoff");
+		optionsLidCloseMode->add(_("SUSPEND"),        "suspend", selectedLidCloseMode == "suspend");
+		optionsLidCloseMode->add(_("SHUTDOWN"),       "shutdown", selectedLidCloseMode == "shutdown");
 
-	addWithLabel(_("LID CLOSE MODE"), optionsLidCloseMode);
+		addWithLabel(_("LID CLOSE MODE"), optionsLidCloseMode);
+	}
 
 	addSaveFunc([this, optionsBatterySaveMode, sliderBatterySaverTime, optionsBatterySaveExtendedMode, sliderBatterySaverExtendedTime, aggressiveBatterySaveMode, optionsLidCloseMode, this]
 	{
@@ -104,7 +109,9 @@ GuiPowerManagementSettings::GuiPowerManagementSettings(Window* window) : GuiSett
 		SystemConf::getInstance()->set("system.batterysaver.extendedtimer", std::to_string(newBatterySaverExtendedTimeSeconds));
 		SystemConf::getInstance()->set("system.batterysaver.extendedmode", optionsBatterySaveExtendedMode->getSelected());
 		SystemConf::getInstance()->setBool("system.batterysaver.aggressive", aggressiveBatterySaveMode->getState());
-		SystemConf::getInstance()->set("system.lid", optionsLidCloseMode->getSelected());
+		if (BoardCheck->isBoard(SUPPORTED_LID_BOARDS)) {
+			SystemConf::getInstance()->set("system.lid", optionsLidCloseMode->getSelected());
+		}
 		SystemConf::getInstance()->saveSystemConf();
 		Scripting::fireEvent("powermanagement-changed");
 		setVariable("exitreboot", true);
