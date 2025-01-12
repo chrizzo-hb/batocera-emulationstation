@@ -85,10 +85,10 @@ GuiPowerManagementSettings::GuiPowerManagementSettings(Window* window) : GuiSett
 	aggressiveBatterySaveMode->setState(SystemConf::getInstance()->getBool("system.batterysaver.aggressive"));
 	addWithLabel(_("ENABLE AGGRESSIVE MODE"), aggressiveBatterySaveMode);
 
-	if (BoardCheck->isBoard(SUPPORTED_LID_BOARDS)) {
-		// Lid close mode
-		auto optionsLidCloseMode = std::make_shared<OptionListComponent<std::string> >(mWindow, _("LID CLOSE MODE"), false);
-
+	// Lid close mode
+	auto optionsLidCloseMode = std::make_shared<OptionListComponent<std::string> >(mWindow, _("LID CLOSE MODE"), false);
+	// TODO: do not even instantiate if lid is not supported
+	if (BoardCheck::isBoard(SUPPORTED_LID_BOARDS)) {
 		std::string selectedLidCloseMode = SystemConf::getInstance()->get("system.lid");
 		if (selectedLidCloseMode.empty())
 			selectedLidCloseMode = "suspend";

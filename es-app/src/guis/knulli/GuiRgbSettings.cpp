@@ -107,7 +107,7 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
     optionsLedMode->add(_("SINGLE RAINBOW"), "5", selectedLedMode == "5");
     optionsLedMode->add(_("MULTI RAINBOW"), "6", selectedLedMode == "6");
 
-    optionsLedMode->onSelectedChanged([this](std::string value) { applyValues(); });
+    optionsLedMode->setOnValueChangedCallback([this](std::string value) { applyValues(); });
 
     addWithDescription(_("MODE"), _("Not every mode is available on every device."), optionsLedMode);
     return optionsLedMode;
