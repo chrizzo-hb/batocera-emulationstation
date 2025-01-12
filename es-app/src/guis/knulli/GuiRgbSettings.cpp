@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include "RgbService.h"
+
 
 constexpr const char* MENU_EVENT_NAME = "rgb-changed";
 
@@ -28,8 +30,12 @@ constexpr float DEFAULT_SPEED = 15;
 constexpr float DEFAULT_LOW_BATTERY_THRESHOLD = 20;
 constexpr const char* DEFAULT_SWITCH_ON = "1";
 
+// Constructor creates a new GuiRgbSettings menu.
 GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED SETTINGS").c_str())
 {
+    // Temporary disable RgbService to be able to interact with the RGB LEDs directly
+    RgbService::stop();
+
     addGroup(_("REGULAR LED MODE AND COLOR"));
 
     // LED Mode Options
@@ -66,6 +72,7 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
     switchRetroAchievements = createSwitch("ACHIEVEMENT EFFECT", "led.retroachievements", "Honor your retro achievements with a LED effect.");
 
     addSaveFunc([this] {
+        // Read all variables from the respective UI elements and set the respective values in batocera.conf
         SystemConf::getInstance()->set("led.mode", optionListMode->getSelected());
         SystemConf::getInstance()->set("led.brightness", std::to_string((int) sliderLedBrightness->getValue()));
         SystemConf::getInstance()->set("led.brightness.adaptive", (switchAdaptiveBrightness->getState() ? DEFAULT_SWITCH_ON : "0"));
@@ -76,9 +83,13 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
         SystemConf::getInstance()->set("led.retroachievements", (switchRetroAchievements->getState() ? DEFAULT_SWITCH_ON : "0"));
 		SystemConf::getInstance()->saveSystemConf();
 		Scripting::fireEvent(MENU_EVENT_NAME);
+
+        // Reactivate the RGB Service
+        RgbService::start();
     });
 }
 
+// Creates a new mode option list
 std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOptionList()
 {
     auto optionsLedMode = std::make_shared<OptionListComponent<std::string>>(mWindow, _("MODE"), false);
@@ -87,6 +98,7 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
     if (selectedLedMode.empty())
         selectedLedMode = DEFAULT_LED_MODE;
 
+    // TODO: Retrieve board-specific mode list somehow
     optionsLedMode->add(_("NONE"), "0", selectedLedMode == "0");
     optionsLedMode->add(_("STATIC"), "1", selectedLedMode == "1");
     optionsLedMode->add(_("BREATHING (FAST)"), "2", selectedLedMode == "2");
@@ -95,13 +107,17 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
     optionsLedMode->add(_("SINGLE RAINBOW"), "5", selectedLedMode == "5");
     optionsLedMode->add(_("MULTI RAINBOW"), "6", selectedLedMode == "6");
 
+    optionsLedMode->onSelectedChanged([this](std::string value) { applyValues(); });
+
     addWithDescription(_("MODE"), _("Not every mode is available on every device."), optionsLedMode);
     return optionsLedMode;
 }
 
+// Creates a new slider
 std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label, float min, float max, float step, std::string unit, std::string description)
 {
     std::shared_ptr<SliderComponent> slider = std::make_shared<SliderComponent>(mWindow, min, max, step, unit);
+    slider->onValueChanged([this](float value) { applyValues(); });
     if (description.empty()) {
         addWithLabel(label, slider);
     } else {
@@ -110,6 +126,7 @@ std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label,
     return slider;
 }
 
+// Sets an initial value to a slider, either from default value or from variable if a batocera.conf variable for this slider has been set
 void GuiRgbSettings::setConfigValueForSlider(std::shared_ptr<SliderComponent> slider, float defaultValue, std::string variable)
 {
     float selectedValue = defaultValue;
@@ -120,6 +137,7 @@ void GuiRgbSettings::setConfigValueForSlider(std::shared_ptr<SliderComponent> sl
     slider->setValue(selectedValue);
 }
 
+// Creates a new switch
 std::shared_ptr<SwitchComponent> GuiRgbSettings::createSwitch(std::string label, std::string variable, std::string description)
 {
     std::shared_ptr<SwitchComponent> switchComponent = std::make_shared<SwitchComponent>(mWindow);
@@ -132,6 +150,7 @@ std::shared_ptr<SwitchComponent> GuiRgbSettings::createSwitch(std::string label,
     return switchComponent;
 }
 
+// Retrieves RGB value settings from batocera.conf as an array of floats
 std::array<float, 3> GuiRgbSettings::getRgbValues()
 {
     std::string colour = SystemConf::getInstance()->get("led.colour");
@@ -154,8 +173,20 @@ std::array<float, 3> GuiRgbSettings::getRgbValues()
     return {red, green, blue};
 }
 
+// Concatenates the RGB values and stores them in batocera.conf.
 void GuiRgbSettings::setRgbValues(float red, float green, float blue)
 {
     std::string colour = std::to_string((int) red) + RGB_DELIMITER + std::to_string((int) green) + RGB_DELIMITER + std::to_string((int) blue);
     SystemConf::getInstance()->set("led.colour", colour);
+}
+
+void applyValues()
+{
+    std::string selectedMode = optionListMode->getSelected();
+    int selectedBrightness = (int) sliderLedBrightness->getValue();
+    int selectedSpeed = (int) sliderLedSpeed->getValue();
+    int selectedRed = (int) sliderLedRed->getValue();
+    int selectedGreen = (int) sliderLedGreen->getValue();
+    int selectedBlue = (int) sliderLedBlue->getValue();
+    RgbService::setRgb(std::stoi(selectedMode), selectedBrightness, selectedSpeed, selectedRed, selectedGreen, selectedBlue);
 }
