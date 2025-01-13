@@ -193,7 +193,7 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 #endif
 
 		addEntry(_("SCRAPER").c_str(), true, [this] { openScraperSettings(); }, "iconScraper");
-	
+
 		if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::BATOCERASTORE) || ApiSystem::getInstance()->isScriptingSupported(ApiSystem::THEMESDOWNLOADER) ||
 			(ApiSystem::getInstance()->isScriptingSupported(ApiSystem::THEBEZELPROJECT) && ApiSystem::getInstance()->isScriptingSupported(ApiSystem::DECORATIONS)) ||
 			ApiSystem::getInstance()->isScriptingSupported(ApiSystem::UPGRADE))
