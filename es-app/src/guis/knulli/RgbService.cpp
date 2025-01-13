@@ -16,7 +16,7 @@ void RgbService::start()
 
 void RgbService::stop()
 {
-	system((RGB_SERVICE_NAME + " stop")).c_str());
+	system((RGB_SERVICE_NAME + " stop").c_str());
 }
 
 void RgbService::setRgb(int mode, int brightness, int speed, int r, int g, int b) {
