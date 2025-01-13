@@ -54,9 +54,12 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
 
     // LED Brightness Slider
     sliderLedBrightness = createSlider("BRIGHTNESS", 0.f, 255.f, 1.f, "", "");
+    
+    LOG(LogError) << "sliderLedBrightness created";
+    
     setConfigValueForSlider(sliderLedBrightness, DEFAULT_BRIGHTNESS, "led.brightness");
 
-    LOG(LogError) << "sliderLedBrightness created";
+    LOG(LogError) << "sliderLedBrightness initialized";
 
     // Adaptive Brightness switch
     switchAdaptiveBrightness = createSwitch("ADAPTIVE BRIGHTNESS", "led.brightness.adaptive", "Automatically adapts LED brightness to screen brightness (based on the brightness setting above).");
