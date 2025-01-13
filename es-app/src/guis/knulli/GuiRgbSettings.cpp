@@ -223,11 +223,17 @@ void GuiRgbSettings::applyValues()
 {
     LOG(LogError) << "apply values called";
     std::string selectedMode = optionListMode->getSelected();
+    LOG(LogError) << "var selectedMode read";
     int selectedBrightness = (int) sliderLedBrightness->getValue();
+    LOG(LogError) << "var selectedBrightness read";
     int selectedSpeed = (int) sliderLedSpeed->getValue();
+    LOG(LogError) << "var selectedSpeed read";
     int selectedRed = (int) sliderLedRed->getValue();
+    LOG(LogError) << "var selectedRed read";
     int selectedGreen = (int) sliderLedGreen->getValue();
+    LOG(LogError) << "var selectedGreen read";
     int selectedBlue = (int) sliderLedBlue->getValue();
+    LOG(LogError) << "var selectedBlue read";
     LOG(LogError) << "all vars read for applying";
     RgbService::setRgb(std::stoi(selectedMode), selectedBrightness, selectedSpeed, selectedRed, selectedGreen, selectedBlue);
     LOG(LogError) << "all vars applied";
