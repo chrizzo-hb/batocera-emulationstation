@@ -6,17 +6,17 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
-std::string RGB_SERVICE_NAME = "/usr/bin/analog_stick_led_daemon.sh"
-std::string RGB_COMMAND_NAME = "/usr/bin/analog_stick_led.sh"
+const std::string RGB_SERVICE_NAME = "/usr/bin/analog_stick_led_daemon.sh"
+const std::string RGB_COMMAND_NAME = "/usr/bin/analog_stick_led.sh"
 
 void RgbService::start()
 {
-	system(RGB_SERVICE_NAME + " start");
+	system((RGB_SERVICE_NAME + " start").c_str());
 }
 
 void RgbService::stop()
 {
-	system(RGB_SERVICE_NAME + " stop");
+	system((RGB_SERVICE_NAME + " stop")).c_str());
 }
 
 void RgbService::setRgb(int mode, int brightness, int speed, int r, int g, int b) {
