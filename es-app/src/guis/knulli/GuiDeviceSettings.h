@@ -1,10 +1,10 @@
 #pragma once
 #include "guis/GuiSettings.h"
 
-class GuiTools : public GuiSettings
+class GuiDeviceSettings : public GuiSettings
 {
 public:
-        GuiTools(Window* window);
+        GuiDeviceSettings(Window* window);
 
 private:
         void openPowerManagementSettings();

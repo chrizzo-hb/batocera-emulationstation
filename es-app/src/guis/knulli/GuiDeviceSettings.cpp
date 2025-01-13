@@ -1,4 +1,4 @@
-#include "guis/knulli/GuiTools.h"
+#include "guis/knulli/GuiDeviceSettings.h"
 #include "guis/knulli/GuiPowerManagementSettings.h"
 #include "guis/knulli/GuiRgbSettings.h"
 #include "guis/knulli/Pico8Installer.h"
@@ -20,29 +20,32 @@
 
 const std::vector<std::string> SUPPORTED_RGB_BOARDS = {"rg40xx-h", "rg40xx-v", "rg-cubexx", "trimui-smart-pro", "trimui-brick"};
 
-GuiTools::GuiTools(Window* window) : GuiSettings(window, _("TOOLS").c_str())
+GuiDeviceSettings::GuiDeviceSettings(Window* window) : GuiSettings(window, _("DEVICE SETTINGS").c_str())
 {
-	addGroup(_("DEVICE SETTINGS"));
+	addGroup(_("POWER SAVING AND BATTERY LIFE"));
 	addEntry(_("POWER MANAGEMENT"), true, [this] { openPowerManagementSettings(); });
 	if(BoardCheck::isBoard(SUPPORTED_RGB_BOARDS)) {
+		addGroup(_("DEVICE CUSTOMIZATION"));
 		addEntry(_("RGB LED SETTINGS"), true, [this] { openRgbLedSettings(); });
 	}
-	addGroup(_("THIRD PARTY SOFTWARE"));
-	addEntry(_("INSTALL PICO-8"), true, [this] { installPico8(); });
+	if(Pico8Installer::hasInstaller()) {
+		addGroup(_("NATIVE PICO-8"));
+		addEntry(_("INSTALL PICO-8"), true, [this] { installPico8(); });
+	}
 }
 
 
-void GuiTools::openPowerManagementSettings()
+void GuiDeviceSettings::openPowerManagementSettings()
 {
 	mWindow->pushGui(new GuiPowerManagementSettings(mWindow));
 }
 
-void GuiTools::openRgbLedSettings()
+void GuiDeviceSettings::openRgbLedSettings()
 {
 	mWindow->pushGui(new GuiRgbSettings(mWindow));
 }
 
-void GuiTools::installPico8()
+void GuiDeviceSettings::installPico8()
 {
 	int result = Pico8Installer::install();
 	if(result == 0) {
