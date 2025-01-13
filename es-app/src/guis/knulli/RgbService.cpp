@@ -15,16 +15,12 @@ const std::string STOP = "stop";
 
 void RgbService::start()
 {
-	if (Utils::FileSystem::exists(RGB_SERVICE_NAME)) {
-		system((RGB_SERVICE_NAME + SEPARATOR + START).c_str());
-	}
+	system((RGB_SERVICE_NAME + SEPARATOR + START).c_str());
 }
 
 void RgbService::stop()
 {
-	if (Utils::FileSystem::exists(RGB_SERVICE_NAME)) {
-		system((RGB_SERVICE_NAME + SEPARATOR + STOP).c_str());
-	}
+	system((RGB_SERVICE_NAME + SEPARATOR + STOP).c_str());
 }
 
 // TODO: This is a prototype. First improve the RGB bash scripts, then adopt the changes here.
