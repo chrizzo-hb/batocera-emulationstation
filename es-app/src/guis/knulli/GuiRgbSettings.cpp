@@ -34,7 +34,7 @@ constexpr const char* DEFAULT_SWITCH_ON = "1";
 GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED SETTINGS").c_str())
 {
     // Temporary disable RgbService to be able to interact with the RGB LEDs directly
-    RgbService::stop();
+    //RgbService::stop();
 
     addGroup(_("REGULAR LED MODE AND COLOR"));
 
@@ -85,7 +85,7 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
 		Scripting::fireEvent(MENU_EVENT_NAME);
 
         // Reactivate the RGB Service
-        RgbService::start();
+        //RgbService::start();
     });
 }
 
