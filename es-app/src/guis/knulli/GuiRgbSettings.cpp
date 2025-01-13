@@ -75,6 +75,7 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
     switchRetroAchievements = createSwitch("ACHIEVEMENT EFFECT", "led.retroachievements", "Honor your retro achievements with a LED effect.");
 
     initializeOnChangeListeners();
+    applyValues();
     addSaveFunc([this] {
         // Read all variables from the respective UI elements and set the respective values in batocera.conf
         SystemConf::getInstance()->set("led.mode", optionListMode->getSelected());
