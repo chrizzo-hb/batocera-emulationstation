@@ -18,7 +18,7 @@ private:
     std::shared_ptr<SwitchComponent> createSwitch(std::string label, std::string variable, std::string description);
     std::array<float, 3> getRgbValues();
     void setRgbValues(float red, float green, float blue);
-    void initializeOnChangeListeners()
+    void initializeOnChangeListeners();
     void applyValues();
 
     std::shared_ptr<OptionListComponent<std::string>> optionListMode;
