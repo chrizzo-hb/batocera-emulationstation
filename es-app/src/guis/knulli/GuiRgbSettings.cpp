@@ -36,41 +36,24 @@ constexpr const char* DEFAULT_SWITCH_ON = "1";
 GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED SETTINGS").c_str())
 {
 
-    LOG(LogError) << "GuiRgbSettings constructor";
-
     // Temporary disable RgbService to be able to interact with the RGB LEDs directly
     RgbService::stop();
 
-    LOG(LogError) << "GuiRgbSettings RGB service stopped";
-
     addGroup(_("REGULAR LED MODE AND COLOR"));
-
-    LOG(LogError) << "GuiRgbSettings Group Regular added";
 
     // LED Mode Options
     optionListMode = createModeOptionList();
 
-    LOG(LogError) << "optionListMode created";
-
     // LED Brightness Slider
-    sliderLedBrightness = createSlider("BRIGHTNESS", 0.f, 255.f, 1.f, "", "");
-    
-    LOG(LogError) << "sliderLedBrightness created";
-    
+    sliderLedBrightness = createSlider("BRIGHTNESS", 0.f, 255.f, 1.f, "", "");    
     setConfigValueForSlider(sliderLedBrightness, DEFAULT_BRIGHTNESS, "led.brightness");
-
-    LOG(LogError) << "sliderLedBrightness initialized";
 
     // Adaptive Brightness switch
     switchAdaptiveBrightness = createSwitch("ADAPTIVE BRIGHTNESS", "led.brightness.adaptive", "Automatically adapts LED brightness to screen brightness (based on the brightness setting above).");
 
-    LOG(LogError) << "switchAdaptiveBrightness created";
-
     // LED Speed Slider
     sliderLedSpeed = createSlider("SPEED", 1.f, 255.f, 1.f, "", "Not applicable for all devices/modes. Warning: High speed may cause seizures for people with photosensitive epilepsy.");
     setConfigValueForSlider(sliderLedSpeed, DEFAULT_SPEED, "led.speed");
-
-    LOG(LogError) << "sliderLedSpeed created";
 
     // LED Colour Sliders
     std::array<float, 3> rgbValues = getRgbValues();
@@ -80,8 +63,6 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
     sliderLedGreen->setValue(rgbValues[1]);
     sliderLedBlue = createSlider("BLUE", 0.f, 255.f, 1.f, "", "");
     sliderLedBlue->setValue(rgbValues[2]);
-
-    LOG(LogError) << "sliderLed R/G/B created";
 
     addGroup(_("BATTERY CHARGE INDICATION"));
 
@@ -93,8 +74,7 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
     addGroup(_("RETRO ACHIEVEMENT INDICATION"));
     switchRetroAchievements = createSwitch("ACHIEVEMENT EFFECT", "led.retroachievements", "Honor your retro achievements with a LED effect.");
 
-    LOG(LogError) << "now adding save func";
-
+    initializeOnChangeListeners();
     addSaveFunc([this] {
         // Read all variables from the respective UI elements and set the respective values in batocera.conf
         SystemConf::getInstance()->set("led.mode", optionListMode->getSelected());
@@ -112,7 +92,6 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
         RgbService::start();
     });
 
-    LOG(LogError) << "save func added";
 }
 
 // Creates a new mode option list
@@ -133,8 +112,6 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
     optionsLedMode->add(_("SINGLE RAINBOW"), "5", selectedLedMode == "5");
     optionsLedMode->add(_("MULTI RAINBOW"), "6", selectedLedMode == "6");
 
-    optionsLedMode->setSelectedChangedCallback([this](std::string value) { applyValues(); });
-
     addWithDescription(_("MODE"), _("Not every mode is available on every device."), optionsLedMode);
     return optionsLedMode;
 }
@@ -143,12 +120,6 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
 std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label, float min, float max, float step, std::string unit, std::string description)
 {
     std::shared_ptr<SliderComponent> slider = std::make_shared<SliderComponent>(mWindow, min, max, step, unit);
-    slider->setOnValueChanged([this](float value)
-    {
-        LOG(LogError) << "applying values";
-        applyValues();
-        LOG(LogError) << "applied values";
-    });
     if (description.empty()) {
         addWithLabel(label, slider);
     } else {
@@ -160,20 +131,12 @@ std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label,
 // Sets an initial value to a slider, either from default value or from variable if a batocera.conf variable for this slider has been set
 void GuiRgbSettings::setConfigValueForSlider(std::shared_ptr<SliderComponent> slider, float defaultValue, std::string variable)
 {
-
-    LOG(LogError) << "setConfigValueForSlider called";
     float selectedValue = defaultValue;
-    LOG(LogError) << "selectedValue initialized";
     std::string configuredValue = SystemConf::getInstance()->get(variable);
-    LOG(LogError) << "configuredValue initialized";
     if (!configuredValue.empty()) {
-        LOG(LogError) << "updating selectedValue";
         selectedValue = Utils::String::toFloat(configuredValue);
-        LOG(LogError) << "updated selectedValue";
     }
-    LOG(LogError) << "setting initial value";
     slider->setValue(selectedValue);
-    LOG(LogError) << "set initial value";
 }
 
 // Creates a new switch
@@ -219,22 +182,23 @@ void GuiRgbSettings::setRgbValues(float red, float green, float blue)
     SystemConf::getInstance()->set("led.colour", colour);
 }
 
+void GuiRgbSettings::initializeOnChangeListeners()
+{
+        optionsLedMode->setSelectedChangedCallback([this](std::string value) { applyValues(); });
+        sliderLedBrightness->setOnValueChanged([this](float value) { applyValues(); });
+        sliderLedSpeed->setOnValueChanged([this](float value) { applyValues(); });
+        sliderLedRed->setOnValueChanged([this](float value) { applyValues(); });
+        sliderLedGreen->setOnValueChanged([this](float value) { applyValues(); });
+        sliderLedBlue->setOnValueChanged([this](float value) { applyValues(); });
+}
+
 void GuiRgbSettings::applyValues()
 {
-    LOG(LogError) << "apply values called";
     std::string selectedMode = optionListMode->getSelected();
-    LOG(LogError) << "var selectedMode read";
     int selectedBrightness = (int) sliderLedBrightness->getValue();
-    LOG(LogError) << "var selectedBrightness read";
     int selectedSpeed = (int) sliderLedSpeed->getValue();
-    LOG(LogError) << "var selectedSpeed read";
     int selectedRed = (int) sliderLedRed->getValue();
-    LOG(LogError) << "var selectedRed read";
     int selectedGreen = (int) sliderLedGreen->getValue();
-    LOG(LogError) << "var selectedGreen read";
     int selectedBlue = (int) sliderLedBlue->getValue();
-    LOG(LogError) << "var selectedBlue read";
-    LOG(LogError) << "all vars read for applying";
     RgbService::setRgb(std::stoi(selectedMode), selectedBrightness, selectedSpeed, selectedRed, selectedGreen, selectedBlue);
-    LOG(LogError) << "all vars applied";
 }
