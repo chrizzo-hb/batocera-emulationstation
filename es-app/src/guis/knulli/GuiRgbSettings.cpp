@@ -143,7 +143,12 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
 std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label, float min, float max, float step, std::string unit, std::string description)
 {
     std::shared_ptr<SliderComponent> slider = std::make_shared<SliderComponent>(mWindow, min, max, step, unit);
-    slider->setOnValueChanged([this](float value) { applyValues(); });
+    slider->setOnValueChanged([this](float value)
+    {
+        LOG(LogError) << "applying values";
+        applyValues();
+        LOG(LogError) << "applied values";
+    });
     if (description.empty()) {
         addWithLabel(label, slider);
     } else {
@@ -216,11 +221,14 @@ void GuiRgbSettings::setRgbValues(float red, float green, float blue)
 
 void GuiRgbSettings::applyValues()
 {
+    LOG(LogError) << "apply values called";
     std::string selectedMode = optionListMode->getSelected();
     int selectedBrightness = (int) sliderLedBrightness->getValue();
     int selectedSpeed = (int) sliderLedSpeed->getValue();
     int selectedRed = (int) sliderLedRed->getValue();
     int selectedGreen = (int) sliderLedGreen->getValue();
     int selectedBlue = (int) sliderLedBlue->getValue();
+    LOG(LogError) << "all vars read for applying";
     RgbService::setRgb(std::stoi(selectedMode), selectedBrightness, selectedSpeed, selectedRed, selectedGreen, selectedBlue);
+    LOG(LogError) << "all vars applied";
 }
