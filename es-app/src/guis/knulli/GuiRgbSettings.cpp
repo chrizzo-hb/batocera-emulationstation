@@ -184,7 +184,7 @@ void GuiRgbSettings::setRgbValues(float red, float green, float blue)
 
 void GuiRgbSettings::initializeOnChangeListeners()
 {
-        optionsLedMode->setSelectedChangedCallback([this](std::string value) { applyValues(); });
+        optionListMode->setSelectedChangedCallback([this](std::string value) { applyValues(); });
         sliderLedBrightness->setOnValueChanged([this](float value) { applyValues(); });
         sliderLedSpeed->setOnValueChanged([this](float value) { applyValues(); });
         sliderLedRed->setOnValueChanged([this](float value) { applyValues(); });
