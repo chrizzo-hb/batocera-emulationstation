@@ -155,12 +155,20 @@ std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label,
 // Sets an initial value to a slider, either from default value or from variable if a batocera.conf variable for this slider has been set
 void GuiRgbSettings::setConfigValueForSlider(std::shared_ptr<SliderComponent> slider, float defaultValue, std::string variable)
 {
+
+    LOG(LogError) << "setConfigValueForSlider called";
     float selectedValue = defaultValue;
+    LOG(LogError) << "selectedValue initialized";
     std::string configuredValue = SystemConf::getInstance()->get(variable);
+    LOG(LogError) << "configuredValue initialized";
     if (!configuredValue.empty()) {
+        LOG(LogError) << "updating selectedValue";
         selectedValue = Utils::String::toFloat(configuredValue);
+        LOG(LogError) << "updated selectedValue";
     }
+    LOG(LogError) << "setting initial value";
     slider->setValue(selectedValue);
+    LOG(LogError) << "set initial value";
 }
 
 // Creates a new switch
