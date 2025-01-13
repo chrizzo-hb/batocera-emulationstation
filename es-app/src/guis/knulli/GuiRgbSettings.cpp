@@ -17,6 +17,8 @@
 #include <string>
 #include "RgbService.h"
 
+#include "Log.h"
+
 
 constexpr const char* MENU_EVENT_NAME = "rgb-changed";
 
@@ -33,24 +35,39 @@ constexpr const char* DEFAULT_SWITCH_ON = "1";
 // Constructor creates a new GuiRgbSettings menu.
 GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED SETTINGS").c_str())
 {
+
+    LOG(LogError) << "GuiRgbSettings constructor";
+
     // Temporary disable RgbService to be able to interact with the RGB LEDs directly
     RgbService::stop();
 
+    LOG(LogError) << "GuiRgbSettings RGB service stopped";
+
     addGroup(_("REGULAR LED MODE AND COLOR"));
+
+    LOG(LogError) << "GuiRgbSettings Group Regular added";
 
     // LED Mode Options
     optionListMode = createModeOptionList();
+
+    LOG(LogError) << "optionListMode created";
 
     // LED Brightness Slider
     sliderLedBrightness = createSlider("BRIGHTNESS", 0.f, 255.f, 1.f, "", "");
     setConfigValueForSlider(sliderLedBrightness, DEFAULT_BRIGHTNESS, "led.brightness");
 
+    LOG(LogError) << "sliderLedBrightness created";
+
     // Adaptive Brightness switch
-    //switchAdaptiveBrightness = createSwitch("ADAPTIVE BRIGHTNESS", "led.brightness.adaptive", "Automatically adapts LED brightness to screen brightness (based on the brightness setting above).");
+    switchAdaptiveBrightness = createSwitch("ADAPTIVE BRIGHTNESS", "led.brightness.adaptive", "Automatically adapts LED brightness to screen brightness (based on the brightness setting above).");
+
+    LOG(LogError) << "switchAdaptiveBrightness created";
 
     // LED Speed Slider
     sliderLedSpeed = createSlider("SPEED", 1.f, 255.f, 1.f, "", "Not applicable for all devices/modes. Warning: High speed may cause seizures for people with photosensitive epilepsy.");
     setConfigValueForSlider(sliderLedSpeed, DEFAULT_SPEED, "led.speed");
+
+    LOG(LogError) << "sliderLedSpeed created";
 
     // LED Colour Sliders
     std::array<float, 3> rgbValues = getRgbValues();
@@ -61,6 +78,8 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
     sliderLedBlue = createSlider("BLUE", 0.f, 255.f, 1.f, "", "");
     sliderLedBlue->setValue(rgbValues[2]);
 
+    LOG(LogError) << "sliderLed R/G/B created";
+
     addGroup(_("BATTERY CHARGE INDICATION"));
 
     // Low battery threshold slider
@@ -70,6 +89,8 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
 
     addGroup(_("RETRO ACHIEVEMENT INDICATION"));
     switchRetroAchievements = createSwitch("ACHIEVEMENT EFFECT", "led.retroachievements", "Honor your retro achievements with a LED effect.");
+
+    LOG(LogError) << "now adding save func";
 
     addSaveFunc([this] {
         // Read all variables from the respective UI elements and set the respective values in batocera.conf
@@ -87,6 +108,8 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
         // Reactivate the RGB Service
         RgbService::start();
     });
+
+    LOG(LogError) << "save func added";
 }
 
 // Creates a new mode option list
