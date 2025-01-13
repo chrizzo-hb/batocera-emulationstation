@@ -200,7 +200,7 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 			addEntry(_("UPDATES & DOWNLOADS"), true, [this] { openUpdatesSettings(); }, "iconUpdates");
 
 		// Tools (Knulli-specific)
-		addEntry(_("DEVICE SETTINGS"), true, [this] { openGuiDeviceSettings(); }, "iconSystem");
+		addEntry(_("DEVICE SETTINGS"), true, [this] { openDeviceSettings(); }, "iconSystem");
 		addEntry(_("SYSTEM SETTINGS").c_str(), true, [this] { openSystemSettings(); }, "iconSystem");
 	}
 	else
@@ -717,7 +717,7 @@ void GuiMenu::openMultiScreensSettings()
 	window->pushGui(s);
 }
 
-void GuiMenu::openGuiDeviceSettings()
+void GuiMenu::openDeviceSettings()
 {
 	mWindow->pushGui(new GuiDeviceSettings(mWindow));
 }
