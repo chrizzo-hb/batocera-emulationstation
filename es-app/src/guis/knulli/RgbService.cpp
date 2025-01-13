@@ -44,6 +44,11 @@ void RgbService::setRgb(int mode, int brightness, int speed, int r, int g, int b
 		system((RGB_COMMAND_NAME
 			 + SEPARATOR + modeString
 			 + SEPARATOR + brightnessString
+			 // Right stick
+			 + SEPARATOR + rString
+			 + SEPARATOR + gString
+			 + SEPARATOR + bString
+			 // Left stick (TODO: Make this obsolete!)
 			 + SEPARATOR + rString
 			 + SEPARATOR + gString
 			 + SEPARATOR + bString
