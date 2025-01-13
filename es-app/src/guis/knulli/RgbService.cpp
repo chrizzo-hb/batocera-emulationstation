@@ -30,12 +30,12 @@ void RgbService::stop()
 // TODO: This is a prototype. First improve the RGB bash scripts, then adopt the changes here.
 void RgbService::setRgb(int mode, int brightness, int speed, int r, int g, int b) {
 	
-	modeString = std::to_string(mode);
-	brightnessString = std::to_string(brightness);
-	speedString = std::to_string(speed);
-	rString = std::to_string(r);
-	gString = std::to_string(g);
-	bString = std::to_string(b);
+	std::string modeString = std::to_string(mode);
+	std::string brightnessString = std::to_string(brightness);
+	std::string speedString = std::to_string(speed);
+	std::string rString = std::to_string(r);
+	std::string gString = std::to_string(g);
+	std::string bString = std::to_string(b);
 
 	if (mode == 0) {
 		system((RGB_COMMAND_NAME + SEPARATOR + modeString).c_str());
