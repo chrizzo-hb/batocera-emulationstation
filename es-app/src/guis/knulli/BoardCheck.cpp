@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <fstream>
+#include <vector>
 #include <string>
 
 const std::string BOARD_FILE = "/boot/boot/batocera.board";
