@@ -22,6 +22,8 @@ private:
     void applyValues();
     void restoreDefaultColors();
 
+    bool isH700;
+    bool isA133;
     std::shared_ptr<OptionListComponent<std::string>> optionListMode;
     std::shared_ptr<SliderComponent> sliderLedBrightness;
     std::shared_ptr<SliderComponent> sliderLedSpeed;

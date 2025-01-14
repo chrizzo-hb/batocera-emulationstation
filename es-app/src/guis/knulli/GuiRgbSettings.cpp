@@ -16,9 +16,12 @@
 #include <memory>
 #include <string>
 #include "RgbService.h"
+#include "BoardCheck.h"
 
 #include "Log.h"
 
+const std::vector<std::string> RGB_BOARDS_H700 = {"rg40xx-h", "rg40xx-v", "rg-cubexx"};
+const std::vector<std::string> RGB_BOARDS_A133 = {"trimui-smart-pro", "trimui-brick"};
 
 constexpr const char* MENU_EVENT_NAME = "rgb-changed";
 
@@ -38,6 +41,10 @@ GuiRgbSettings::GuiRgbSettings(Window* window) : GuiSettings(window, _("RGB LED 
 
     // Temporary disable RgbService to be able to interact with the RGB LEDs directly
     RgbService::stop();
+
+    // TODO: This should not be hard-coded, it should be read from a file or a service.
+    isH700 = BoardCheck::isBoard(RGB_BOARDS_H700);
+    isA133 = BoardCheck::isBoard(RGB_BOARDS_A133);
 
     addGroup(_("REGULAR LED MODE AND COLOR"));
 
@@ -105,23 +112,33 @@ std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createModeOpti
     if (selectedLedMode.empty())
         selectedLedMode = DEFAULT_LED_MODE;
 
-    // TODO: Retrieve board-specific mode list somehow
     optionsLedMode->add(_("NONE"), "0", selectedLedMode == "0");
-    optionsLedMode->add(_("STATIC"), "1", selectedLedMode == "1");
-    optionsLedMode->add(_("BREATHING (FAST)"), "2", selectedLedMode == "2");
-    optionsLedMode->add(_("BREATHING (MEDIUM)"), "3", selectedLedMode == "3");
-    optionsLedMode->add(_("BREATHING (SLOW)"), "4", selectedLedMode == "4");
-    optionsLedMode->add(_("SINGLE RAINBOW"), "5", selectedLedMode == "5");
-    optionsLedMode->add(_("MULTI RAINBOW"), "6", selectedLedMode == "6");
+    if (isH700 || isA133) {
+        optionsLedMode->add(_("STATIC"), "1", selectedLedMode == "1");
+    }
+    if (isH700) {
+        optionsLedMode->add(_("BREATHING (FAST)"), "2", selectedLedMode == "2");
+    }
+    if (isH700 || isA133) {
+        optionsLedMode->add(_("BREATHING (MEDIUM)"), "3", selectedLedMode == "3");
+    }
+    if (isH700) {
+        optionsLedMode->add(_("BREATHING (SLOW)"), "4", selectedLedMode == "4");
+        optionsLedMode->add(_("SINGLE RAINBOW"), "5", selectedLedMode == "5");
+        optionsLedMode->add(_("MULTI RAINBOW"), "6", selectedLedMode == "6");
+    }
 
-    addWithDescription(_("MODE"), _("Not every mode is available on every device."), optionsLedMode);
+    addWithDescription(_("MODE"), _("Set the default LED animation. (Not all of the settings below are applicable to every mode.)"), optionsLedMode);
     return optionsLedMode;
 }
 
 // Creates a new slider
-std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label, float min, float max, float step, std::string unit, std::string description)
+std::shared_ptr<SliderComponent> GuiRgbSettings::createSlider(std::string label, float min, float max, float step, std::string unit, std::string description, bool show)
 {
     std::shared_ptr<SliderComponent> slider = std::make_shared<SliderComponent>(mWindow, min, max, step, unit);
+    if (!show) { // TODO: Awful hack to hide the slider, find a better way to do this
+        return slider;
+    }
     if (description.empty()) {
         addWithLabel(label, slider);
     } else {
@@ -142,7 +159,7 @@ void GuiRgbSettings::setConfigValueForSlider(std::shared_ptr<SliderComponent> sl
 }
 
 // Creates a new switch
-std::shared_ptr<SwitchComponent> GuiRgbSettings::createSwitch(std::string label, std::string variable, std::string description)
+std::shared_ptr<SwitchComponent> GuiRgbSettings::createSwitch(std::string label, std::string variable, std::string description, bool show)
 {
     std::shared_ptr<SwitchComponent> switchComponent = std::make_shared<SwitchComponent>(mWindow);
     std::string selected = SystemConf::getInstance()->get(variable);
@@ -150,6 +167,9 @@ std::shared_ptr<SwitchComponent> GuiRgbSettings::createSwitch(std::string label,
         selected = DEFAULT_SWITCH_ON;
 
     switchComponent->setState(selected == DEFAULT_SWITCH_ON);
+    if (!show) { // TODO: Awful hack to hide the switch, find a better way to do this
+        return switchComponent;
+    }
     addWithDescription(label, description, switchComponent);
     return switchComponent;
 }
