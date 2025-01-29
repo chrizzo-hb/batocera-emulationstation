@@ -199,8 +199,9 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 			ApiSystem::getInstance()->isScriptingSupported(ApiSystem::UPGRADE))
 			addEntry(_("UPDATES & DOWNLOADS"), true, [this] { openUpdatesSettings(); }, "iconUpdates");
 
-		// Tools (Knulli-specific)
+#ifdef KNULLI
 		addEntry(_("DEVICE SETTINGS"), true, [this] { openDeviceSettings(); }, "iconSystem");
+#endif
 		addEntry(_("SYSTEM SETTINGS").c_str(), true, [this] { openSystemSettings(); }, "iconSystem");
 	}
 	else
@@ -1238,6 +1239,7 @@ void GuiMenu::openUpdatesSettings()
 		});
 	}
 
+#ifndef KNULLI
 	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::UPGRADE))
 	{
 		updateGui->addGroup(_("SOFTWARE UPDATES"));
@@ -1291,6 +1293,7 @@ void GuiMenu::openUpdatesSettings()
 	}
 
 	mWindow->pushGui(updateGui);
+#endif
 }
 
 bool GuiMenu::checkNetwork()
@@ -1673,6 +1676,7 @@ void GuiMenu::openSystemSettings()
 	  }
 	});
 
+#ifndef KNULLI
 	// splash
 	auto optionsSplash = std::make_shared<OptionListComponent<std::string> >(mWindow, _("BOOT SPLASH"), false);
 
@@ -1714,6 +1718,7 @@ void GuiMenu::openSystemSettings()
 	    SystemConf::getInstance()->saveSystemConf();
 	  }
 	});
+#endif
 #else
 	if (!ApiSystem::getInstance()->isScriptingSupported(ApiSystem::GAMESETTINGS))
 	{
@@ -1840,11 +1845,15 @@ void GuiMenu::openSystemSettings()
 	}
 
 #ifdef BATOCERA
+#ifndef KNULLI
 	s->addEntry(_("DMD"), true, [this] { openDmdSettings(); });
+#endif
 #endif
 
 #ifdef BATOCERA
+#ifndef KNULLI
         s->addEntry(_("MULTISCREENS"), true, [this] { openMultiScreensSettings(); });
+#endif
 #endif
 
 #ifdef BATOCERA
