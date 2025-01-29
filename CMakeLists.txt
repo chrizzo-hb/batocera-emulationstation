@@ -98,6 +98,11 @@ if(RETROBAT)
   add_definitions(-DRETROBAT)
 endif()
 
+if(KNULLI)
+  MESSAGE("Knulli build")
+  add_definitions(-DKNULLI)
+endif()
+
 # disable kodi menu
 if(DISABLE_KODI)
   MESSAGE("Kodi disabled")
