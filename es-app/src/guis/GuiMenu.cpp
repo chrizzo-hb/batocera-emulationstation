@@ -1291,9 +1291,8 @@ void GuiMenu::openUpdatesSettings()
 			}
 		});
 	}
-
-	mWindow->pushGui(updateGui);
 #endif
+	mWindow->pushGui(updateGui);
 }
 
 bool GuiMenu::checkNetwork()
