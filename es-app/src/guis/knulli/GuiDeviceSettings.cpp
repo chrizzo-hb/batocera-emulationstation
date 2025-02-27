@@ -62,7 +62,7 @@ void GuiDeviceSettings::installPico8()
 }
 
 // Creates a new mode option list
-std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createUsbModeOptionList()
+std::shared_ptr<OptionListComponent<std::string>> GuiDeviceSettings::createUsbModeOptionList()
 {
     auto optionsUsbMode = std::make_shared<OptionListComponent<std::string>>(mWindow, _("USB MODE"), false);
 
