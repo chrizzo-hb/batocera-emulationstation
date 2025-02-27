@@ -82,6 +82,7 @@ set(ES_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/GuiRgbSettings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/Pico8Installer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/RgbService.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/UsbService.h
 
     # Scrapers
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scrapers/Scraper.h
@@ -191,6 +192,7 @@ set(ES_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/GuiRgbSettings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/Pico8Installer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/RgbService.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/guis/knulli/UsbService.cpp
 
     # Scrapers
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scrapers/Scraper.cpp
