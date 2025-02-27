@@ -37,6 +37,20 @@ GuiDeviceSettings::GuiDeviceSettings(Window* window) : GuiSettings(window, _("DE
 	}
 	addGroup(_("USB MODE"));
 	optionsUsbMode = createUsbModeOptionList();
+
+	addSaveFunc([this] {		
+        // Set the USB mode in batocera.conf
+        SystemConf::getInstance()->set("system.usbmode", optionsUsbMode->getSelected());
+
+		if (optionsUsbMode->getSelected() == "off") {
+			// Deactivate the USB Service
+			UsbService::stop();
+		} else {
+			// Reactivate the USB Service
+			UsbService::restart();	
+		}
+    });
+	
 }
 
 
@@ -76,19 +90,5 @@ std::shared_ptr<OptionListComponent<std::string>> GuiDeviceSettings::createUsbMo
 	optionsUsbMode->add(_("MTP"), "mtp", selectedUsbMode == "mtp");
 
     addWithDescription(_("USB MODE"), _("Set the USB mode to access your device."), optionsUsbMode);
-
-    addSaveFunc([this] {		
-        // Set the USB mode in batocera.conf
-        SystemConf::getInstance()->set("system.usbmode", optionsUsbMode->getSelected());
-
-		if (optionsUsbMode->getSelected() == "off") {
-			// Deactivate the USB Service
-			UsbService::stop();
-		} else {
-			// Reactivate the USB Service
-			UsbService::restart();	
-		}
-    });
-
     return optionsUsbMode;
 }
