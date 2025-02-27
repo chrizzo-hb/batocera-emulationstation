@@ -1,4 +1,5 @@
 #pragma once
+#include "utils/StringUtil.h"
 
 class UsbService
 {

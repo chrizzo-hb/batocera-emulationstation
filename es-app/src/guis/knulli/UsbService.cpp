@@ -30,7 +30,7 @@ void UsbService::restart()
 
 void UsbService::call(std::string argument)
 {
-	if (Utils::FileSystem::exists(RGB_SERVICE_NAME)) {
+	if (Utils::FileSystem::exists(USB_SERVICE_NAME)) {
 		system((USB_SERVICE_NAME + SEPARATOR + argument).c_str());
 	}
 }
