@@ -36,6 +36,7 @@ GuiDeviceSettings::GuiDeviceSettings(Window* window) : GuiSettings(window, _("DE
 		addEntry(_("INSTALL PICO-8"), true, [this] { installPico8(); });
 	}
 	addGroup(_("USB MODE"));
+	optionsUsbMode = createUsbModeOptionList();
 }
 
 
@@ -70,17 +71,17 @@ std::shared_ptr<OptionListComponent<std::string>> GuiDeviceSettings::createUsbMo
     if (selectedUsbMode.empty())
         selectedUsbMode = DEFAULT_USB_MODE;
 
-    optionsLedMode->add(_("OFF"), "off", selectedLedMode == "off");
-	optionsLedMode->add(_("ADB"), "adb", selectedLedMode == "adb");
-	optionsLedMode->add(_("MTP"), "mtp", selectedLedMode == "mtp");
+	optionsUsbMode->add(_("OFF"), "off", selectedLedMode == "off");
+	optionsUsbMode->add(_("ADB"), "adb", selectedLedMode == "adb");
+	optionsUsbMode->add(_("MTP"), "mtp", selectedLedMode == "mtp");
 
     addWithDescription(_("USB MODE"), _("Set the USB mode to access your device."), optionsUsbMode);
 
     addSaveFunc([this] {		
         // Set the USB mode in batocera.conf
-        SystemConf::getInstance()->set("system.usbmode", optionListMode->getSelected());
+        SystemConf::getInstance()->set("system.usbmode", optionsUsbMode->getSelected());
 
-		if (optionListMode->getSelected() == "off") {
+		if (optionsUsbMode->getSelected() == "off") {
 			// Deactivate the USB Service
 			UsbService::stop();
 		} else {

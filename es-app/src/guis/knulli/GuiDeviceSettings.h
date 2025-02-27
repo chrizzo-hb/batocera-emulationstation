@@ -11,5 +11,6 @@ private:
         void openRgbLedSettings();
         void installPico8();
         std::shared_ptr<OptionListComponent<std::string>> createUsbModeOptionList();
-        std::shared_ptr<OptionListComponent<std::string>> optionListMode;
+
+        std::shared_ptr<OptionListComponent<std::string>> optionsUsbMode;
 };
