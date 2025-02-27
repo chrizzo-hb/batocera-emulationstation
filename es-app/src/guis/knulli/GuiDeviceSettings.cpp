@@ -71,9 +71,9 @@ std::shared_ptr<OptionListComponent<std::string>> GuiDeviceSettings::createUsbMo
     if (selectedUsbMode.empty())
         selectedUsbMode = DEFAULT_USB_MODE;
 
-	optionsUsbMode->add(_("OFF"), "off", selectedLedMode == "off");
-	optionsUsbMode->add(_("ADB"), "adb", selectedLedMode == "adb");
-	optionsUsbMode->add(_("MTP"), "mtp", selectedLedMode == "mtp");
+	optionsUsbMode->add(_("OFF"), "off", selectedUsbMode == "off");
+	optionsUsbMode->add(_("ADB"), "adb", selectedUsbMode == "adb");
+	optionsUsbMode->add(_("MTP"), "mtp", selectedUsbMode == "mtp");
 
     addWithDescription(_("USB MODE"), _("Set the USB mode to access your device."), optionsUsbMode);
 
