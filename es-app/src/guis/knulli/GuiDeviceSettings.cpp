@@ -41,6 +41,7 @@ GuiDeviceSettings::GuiDeviceSettings(Window* window) : GuiSettings(window, _("DE
 	addSaveFunc([this] {		
         // Set the USB mode in batocera.conf
         SystemConf::getInstance()->set("system.usbmode", optionsUsbMode->getSelected());
+		SystemConf::getInstance()->saveSystemConf();
 
 		if (optionsUsbMode->getSelected() == "off") {
 			// Deactivate the USB Service
