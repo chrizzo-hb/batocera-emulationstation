@@ -17,8 +17,11 @@
 #include <algorithm>
 #include "utils/Platform.h"
 #include "BoardCheck.h"
+#include "UsbService.h"
 
 const std::vector<std::string> SUPPORTED_RGB_BOARDS = {"rg40xx-h", "rg40xx-v", "rg-cubexx", "trimui-smart-pro", "trimui-brick"};
+
+constexpr const char* DEFAULT_USB_MODE = "off";
 
 GuiDeviceSettings::GuiDeviceSettings(Window* window) : GuiSettings(window, _("DEVICE SETTINGS").c_str())
 {
@@ -32,6 +35,7 @@ GuiDeviceSettings::GuiDeviceSettings(Window* window) : GuiSettings(window, _("DE
 		addGroup(_("NATIVE PICO-8"));
 		addEntry(_("INSTALL PICO-8"), true, [this] { installPico8(); });
 	}
+	addGroup(_("USB MODE"));
 }
 
 
@@ -55,4 +59,35 @@ void GuiDeviceSettings::installPico8()
 	} else if(result == 2) {
 		mWindow->pushGui(new GuiMsgBox(mWindow, "Unable to install: Pico-8 installer files missing. Please download the Raspberry Pi version of Pico-8 and place the ZIP file in the roms/pico8 folder and try again.", "OK", nullptr));
 	}
+}
+
+// Creates a new mode option list
+std::shared_ptr<OptionListComponent<std::string>> GuiRgbSettings::createUsbModeOptionList()
+{
+    auto optionsUsbMode = std::make_shared<OptionListComponent<std::string>>(mWindow, _("USB MODE"), false);
+
+    std::string selectedUsbMode = SystemConf::getInstance()->get("system.usbmode");
+    if (selectedUsbMode.empty())
+        selectedUsbMode = DEFAULT_USB_MODE;
+
+    optionsLedMode->add(_("OFF"), "off", selectedLedMode == "off");
+	optionsLedMode->add(_("ADB"), "adb", selectedLedMode == "adb");
+	optionsLedMode->add(_("MTP"), "mtp", selectedLedMode == "mtp");
+
+    addWithDescription(_("USB MODE"), _("Set the USB mode to access your device."), optionsUsbMode);
+
+    addSaveFunc([this] {		
+        // Set the USB mode in batocera.conf
+        SystemConf::getInstance()->set("system.usbmode", optionListMode->getSelected());
+
+		if (optionListMode->getSelected() == "off") {
+			// Deactivate the USB Service
+			UsbService::stop();
+		} else {
+			// Reactivate the USB Service
+			UsbService::restart();	
+		}
+    });
+
+    return optionsUsbMode;
 }
