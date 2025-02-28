@@ -7,7 +7,7 @@
 #include <sys/wait.h>
 #include <fstream>
 
-const std::string USB_SERVICE_NAME = "/etc/init.d/S07adb";
+const std::string USB_SERVICE_NAME = "/etc/init.d/S13adb";
 const std::string SEPARATOR = " ";
 const std::string START = "start";
 const std::string STOP = "stop";
